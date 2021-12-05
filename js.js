@@ -18,26 +18,26 @@ class GameBoard {
         this.isFinished = false;
     }
 
-    setScore(){
-        if(this.highScore<this.score){
+    setScore() {
+        if (this.highScore < this.score) {
             this.highScore = this.score;
         }
         scoreBox.innerText = this.score;
         highScoreBox.innerText = this.highScore;
     }
 
-    loadHighScore(){
+    loadHighScore() {
         const old = this.getCookie();
-        if (old !== null){
+        if (old !== null) {
             this.highScore = old;
         }
     }
 
-    saveHighScore(){
+    saveHighScore() {
         const old = this.getCookie();
-        if (old === null){
+        if (old === null) {
             this.setCookie(this.score);
-        }else if(old < this.score){
+        } else if (old < this.score) {
             this.deleteCookie();
             this.setCookie(this.score);
         }
@@ -45,21 +45,21 @@ class GameBoard {
 
     setCookie(value) {
         let date = new Date();
-        date.setTime(date.getTime() + 365*24*60*60*1000);
+        date.setTime(date.getTime() + 365 * 24 * 60 * 60 * 1000);
         document.cookie = "highscore" + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
     }
-    
+
     deleteCookie() {
         document.cookie = "highscore" + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
-    
+
     getCookie() {
         let value = document.cookie.match('(^|;) ?' + "highscore" + '=([^;]*)(;|$)');
-        return value? value[2] : null;
+        return value ? value[2] : null;
     }
-    
 
-    initBoard(){
+
+    initBoard() {
         this.board = [];
         for (var i = 0; i < this.size; i++) {
             var arr = [];
@@ -118,7 +118,7 @@ class GameBoard {
     }
 
     createNewNum() {
-        return Math.floor((Math.floor(Math.random() * 10)+11)/10)*2;
+        return Math.floor((Math.floor(Math.random() * 10) + 11) / 10) * 2;
     }
 
     getNewBlock() {
@@ -166,8 +166,8 @@ class GameBoard {
                 this.saveHighScore();
                 this.score = 0;
                 var temp = this
-                setTimeout(function () {window.alert("Game Over!"); temp.initBoard(); temp.setScore();}, 20);
-            }else{
+                setTimeout(function () { window.alert("Game Over!"); temp.initBoard(); temp.setScore(); }, 20);
+            } else {
                 this.setScore();
             }
         }
@@ -184,19 +184,25 @@ class GameBoard {
             var curNum = arr[pointer];
             if (curNum === 0) {
                 //pass
-            } else if (pointer + 1 < this.size) {
-                if (arr[pointer] === arr[pointer + 1]) {
-                    chgArr[newPointer] = 2 * arr[pointer];
-                    this.score += chgArr[newPointer];
+            } else {
+                var curPointer = pointer;
+                while (pointer + 1 < this.size && arr[pointer + 1] === 0) {
                     pointer++;
-                    newPointer++;
+                }
+                if (pointer + 1 < this.size) {
+                    if (arr[curPointer] === arr[pointer + 1]) {
+                        chgArr[newPointer] = 2 * arr[curPointer];
+                        this.score += chgArr[newPointer];
+                        pointer++;
+                        newPointer++;
+                    } else {
+                        chgArr[newPointer] = arr[curPointer];
+                        newPointer++;
+                    }
                 } else {
-                    chgArr[newPointer] = arr[pointer];
+                    chgArr[newPointer] = arr[curPointer];
                     newPointer++;
                 }
-            } else {
-                chgArr[newPointer] = arr[pointer];
-                newPointer++;
             }
             pointer++;
         }
